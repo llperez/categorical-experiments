@@ -1,5 +1,5 @@
 #include "gumbel_max.h"
-#include "inverse_method.h"
+#include "inverse_sampling.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -269,25 +269,6 @@ int main(int argc, char **argv) {
   const gsl_rng_type * T = gsl_rng_default;
   gsl_rng * r = gsl_rng_alloc (T);
 
-  /**
-  
-  double p[20] = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.02, 0.02, 0.02, 0.02, 0.02};
-
-  for (int i=0;i<20;i++) {
-    p[i] = log(p[i]);
-  }
-
-  gumbel_max_precomp_t *gmp = gumbel_max_precomp_create(1000000, r);
-  for (int i=0;i<1000000;i++) {
-    int dx = gumbel_max_precomp(p, 20, r, gmp);
-    printf("%d\n", dx);
-  }
-
-  gumbel_max_precomp_free(gmp);
-  
-  return(-1);
-  **/
-  
   if (argc < 5) {
     return(-1);
   }
