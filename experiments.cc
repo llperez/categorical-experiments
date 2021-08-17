@@ -1,6 +1,3 @@
-#include "gumbel_max.h"
-#include "inverse_sampling.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,43 +6,9 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
-// returns the number of milliseconds of a gettimeofday call. 
-long millis(struct timeval tx) {
-  return (long)tx.tv_sec * 1000 + (long)tx.tv_usec / 1000;
-}
-
-double *exp_max(double *p, unsigned int size) {
-
-  // find max
-  double max_p = p[0];
-  for (unsigned int i=1;i<size;i++) {
-    if (p[i] > max_p) {
-      max_p = p[i];
-    }
-  }
-
-  double *out_p = (double *)malloc(sizeof(double) * size);
-  for (unsigned int i=0;i<size;i++) {
-    out_p[i] = exp(p[i] - max_p);
-  }
-
-  return(out_p);
-}
-
-// generate an array of k unnormalized probabilities.
-double *gen_dist(unsigned int k, gsl_rng *r, bool log_p) {
-  double *out = (double *)malloc(sizeof(double) * k);
-
-  for (unsigned int i=0;i<k;i++) {
-    out[i] = gsl_rng_uniform(r);
-    if (log_p) {
-      out[i] = log(out[i]);
-    }
-  }
-
-  return(out);
-}
-
+#include "gumbel_max.h"
+#include "inverse_sampling.h"
+#include "misc.h"
 
 // Gumbel-max (linear scale)
 void gum_lin(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
@@ -72,6 +35,7 @@ void gum_lin(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
   }
 }
 
+// Gumbel-max (linear scale, with precomputation)
 void gum_lin_precomp(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
 
   struct timeval time_x;
@@ -128,6 +92,7 @@ void gum_log(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
   }
 }
 
+// Gumbel-max (log scale, with precomputation)
 void gum_log_precomp(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
 
   struct timeval time_x;
@@ -157,7 +122,7 @@ void gum_log_precomp(unsigned int k, int num_trials, int num_repeats, gsl_rng *r
   }
 }
 
-// inverse-sampling (linear scale)
+// inverse sampling (linear scale)
 void inv_lin(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
 
   double *s = (double *)malloc(sizeof(double) * k);
@@ -183,7 +148,7 @@ void inv_lin(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
   free(s);
 }
 
-// inverse-sampling (log scale)
+// inverse sampling (log scale)
 void inv_log(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
 
   double *s = (double *)malloc(sizeof(double) * k);
@@ -212,7 +177,7 @@ void inv_log(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
 }
 
 
-// gsl (linear scale)
+// preprocessed (linear scale)
 void gsl_lin(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
   struct timeval time_x;
   struct timeval time_y;
@@ -237,6 +202,7 @@ void gsl_lin(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
   }  
 }
 
+// preprocessed (log scale)
 void gsl_log(unsigned int k, int num_trials, int num_repeats, gsl_rng *r) {
   struct timeval time_x;
   struct timeval time_y;
